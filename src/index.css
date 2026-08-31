@@ -1,0 +1,29 @@
+@import "tailwindcss";
+
+@theme {
+  /* Colores de la diferencia unitaria (iguales que en la app WinUI 3):
+     verde hoja cuando el referencial supera al precio final (a favor)
+     y rojo carmesí cuando es en contra. */
+  --color-hoja: #4caf50;
+  --color-carmesi: #dc143c;
+}
+
+@layer base {
+  body {
+    @apply bg-slate-100 text-slate-900 antialiased;
+  }
+}
+
+@layer components {
+  /* Tarjeta de los paneles (equivalente al Border con fondo de WinUI). */
+  .card {
+    @apply rounded-xl border border-slate-200 bg-white shadow-sm;
+  }
+
+  /* Campo de entrada (equivalente a la NumberBox). */
+  .card-input {
+    @apply w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm
+      text-slate-900 placeholder-slate-400 outline-none transition-colors
+      focus:border-slate-500 focus:ring-2 focus:ring-slate-300;
+  }
+}

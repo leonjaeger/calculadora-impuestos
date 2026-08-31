@@ -1,0 +1,40 @@
+# La ÚNICA consulta diaria al BCB del proyecto. Descarga la tabla,
+# la parsea con scripts/bcbParse.js y escribe public/cotizacion.json.
+# Si el archivo cambió, hace commit y push — lo que dispara el
+# despliegue (.github/workflows/deploy.yml). Si el BCB no publicó nada
+# nuevo, no hay commit y el sitio conserva el archivo anterior (su
+# campo `fecha` lo hace visible).
+name: Cotización BCB
+
+on:
+  schedule:
+    # 05:10 de Bolivia (UTC−4). La tabla del BCB ya marca el día siguiente
+    # alrededor de las 20:00 de Bolivia (00:00 UTC), así que a esta hora el
+    # giro del día ya ocurrió de sobra.
+    - cron: '10 9 * * *'
+  workflow_dispatch: {} # botón «Run workflow» para forzar una actualización manual
+
+permissions:
+  contents: write # el bot hace commit del archivo actualizado
+
+jobs:
+  actualizar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Descargar y parsear la tabla del BCB
+        run: node scripts/actualizar-cotizacion.mjs
+      - name: Commit si cambió la cotización
+        run: |
+          git config user.name "bot-cotizacion"
+          git config user.email "bot-cotizacion@users.noreply.github.com"
+          git add public/cotizacion.json
+          if git diff --cached --quiet; then
+            echo "Sin cambios: el BCB no publicó una nueva cotización"
+            exit 0
+          fi
+          git commit -m "Cotización BCB $(date -I)"
+          git push

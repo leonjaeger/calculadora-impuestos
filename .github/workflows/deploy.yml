@@ -1,0 +1,29 @@
+# Despliegue a Firebase Hosting: se dispara con cada push (incluidos
+# los commits diarios del bot de la cotización). Requiere el secreto
+# FIREBASE_TOKEN (token CI generado con `firebase login:ci`) y un
+# proyecto configurado en .firebaserc.
+name: Despliegue
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  desplegar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - name: Publicar en Firebase Hosting
+        run: npx firebase-tools@latest deploy --only hosting --non-interactive
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
