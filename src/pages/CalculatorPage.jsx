@@ -24,6 +24,7 @@ export default function CalculatorPage() {
   const { campos, setCampo, reiniciar, cargarGuardado } = useCalculator()
   const { guardados, agregar, eliminar } = useSavedCalculations()
   const [dialogoAbierto, setDialogoAbierto] = useState(false)
+  const [nombreSugerido, setNombreSugerido] = useState('')
 
   // Cuántas unidades de cada moneda equivalen a 1 USD, derivado de la
   // cotización del BCB (Bs por USD y Bs por EUR).
@@ -82,30 +83,35 @@ export default function CalculatorPage() {
     }
   }, [campos, unidadesPorUsd])
 
-  const nombreSugerido = useMemo(() => {
+  /** Nombre propuesto para "Guardar como", con fecha y hora del momento. */
+  const sugerirNombre = () => {
     const ahora = new Date()
     const dd = String(ahora.getDate()).padStart(2, '0')
     const mm = String(ahora.getMonth() + 1).padStart(2, '0')
     const hh = String(ahora.getHours()).padStart(2, '0')
     const mi = String(ahora.getMinutes()).padStart(2, '0')
     return `Cálculo del ${dd}/${mm}/${ahora.getFullYear()} ${hh}:${mi}`
-  }, [dialogoAbierto])
+  }
+
+  /** Texto vacío → null, para que el campo vuelva vacío al recargar. */
+  const numeroOvacio = (texto) => (texto.trim() === '' ? null : toNumber(texto))
 
   const guardar = (nombre) => {
     setDialogoAbierto(false)
     agregar({
       nombre,
-      referencial: toNumber(campos.referencial),
+      referencial: numeroOvacio(campos.referencial),
       referencialUnidades: Math.max(1, toNumber(campos.referencialUnidades, { porDefecto: 1 })),
       gananciaPct: campos.gananciaPct,
-      envio: toNumber(campos.envio),
-      manipuleo: toNumber(campos.manipuleo),
+      envio: numeroOvacio(campos.envio),
+      manipuleo: numeroOvacio(campos.manipuleo),
       monedaCostos: campos.monedaCostos,
     })
   }
 
   return (
-    <MainTemplate
+    <>
+      <MainTemplate
       header={<AppHeader />}
       lateral={(
         <>
@@ -127,11 +133,21 @@ export default function CalculatorPage() {
               campos={campos}
               setCampo={setCampo}
               local={local}
-              onGuardarComo={() => setDialogoAbierto(true)}
+              onGuardarComo={() => {
+                setNombreSugerido(sugerirNombre())
+                setDialogoAbierto(true)
+              }}
             />
           </div>
         </div>
       )}
     />
+      <SaveCalcDialog
+        abierto={dialogoAbierto}
+        nombreSugerido={nombreSugerido}
+        onGuardar={guardar}
+        onCancelar={() => setDialogoAbierto(false)}
+      />
+    </>
   )
 }

@@ -6,7 +6,7 @@
  * decimales, y la desambiguación final la hace parseNumberInput al
  * calcular. El usuario nunca ve cómo su entrada muta a un float.
  */
-export default function NumberInput({ value, onChange, placeholder = '0.00', className = '', ...props }) {
+export default function NumberInput({ value, onChange, placeholder = '0,00', className = '', ...props }) {
   return (
     <input
       type="text"

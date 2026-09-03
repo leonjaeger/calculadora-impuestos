@@ -10,7 +10,9 @@ import {
  * como el temporizador de la app original). Si no hay red ni caché, se
  * queda con las tasas provisionales y el panel muestra el error.
  *
- * `estado` es uno de: 'inicial' | 'cargando' | 'actualizando' | 'ok' | 'error'.
+ * `estado` es uno de: 'inicial' | 'cargando' | 'actualizando' | 'ok' |
+ * 'desactualizado' (se muestra caché de respaldo tras fallar el
+ * refresco) | 'error'.
  */
 export function useBcbRates() {
   const [cotizacion, setCotizacion] = useState(COTIZACION_PROVISIONAL)
@@ -28,7 +30,9 @@ export function useBcbRates() {
 
     if (resultado) {
       setCotizacion(resultado.cotizacion)
-      setEstado('ok')
+      // Con caché de respaldo el panel sigue mostrando datos, pero se
+      // avisa: lo mostrado puede estar desactualizado.
+      setEstado(resultado.refrescoOk ? 'ok' : 'desactualizado')
     } else {
       setEstado('error')
     }

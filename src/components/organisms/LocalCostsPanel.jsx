@@ -19,6 +19,7 @@ export default function LocalCostsPanel({ campos, setCampo, local, onGuardarComo
   const simboloSalida = simboloDe(campos.monedaSalida)
   const simboloReferencial = simboloDe(MONEDA_REFERENCIAL)
   const gananciaPct = Math.round(local.gananciaPct)
+  const hayReferencial = local.referencialUnitario > 0
   const aFavor = local.diferencia >= 0
 
   const comparacion = aFavor
@@ -75,8 +76,8 @@ export default function LocalCostsPanel({ campos, setCampo, local, onGuardarComo
       <div className="grid gap-2">
         <p className="text-sm font-semibold text-slate-900">Desglose</p>
         <DesgloseRow etiqueta="Total importado (base + GA + IVA)" valor={local.totalImportado} simbolo={simboloSalida} />
-        <DesgloseRow etiqueta="Envío (÷ unidades)" valor={local.envio} simbolo={simboloSalida} />
-        <DesgloseRow etiqueta="Manipuleo (÷ unidades)" valor={local.manipuleo} simbolo={simboloSalida} />
+        <DesgloseRow etiqueta="Envío (total del lote)" valor={local.envio} simbolo={simboloSalida} />
+        <DesgloseRow etiqueta="Manipuleo (total del lote)" valor={local.manipuleo} simbolo={simboloSalida} />
         <DesgloseRow etiqueta={`Ganancia (${gananciaPct} %)`} valor={local.gananciaTotal} simbolo={simboloSalida} />
       </div>
 
@@ -96,13 +97,22 @@ export default function LocalCostsPanel({ campos, setCampo, local, onGuardarComo
             <Amount valor={local.referencialTotal} simbolo={simboloSalida} size="sm" />
           </div>
         </div>
-        <div className="mt-3 flex items-baseline justify-between border-t border-slate-200 pt-3">
-          <p className="text-xs text-slate-500">Diferencia unitaria</p>
-          <p className={`text-lg font-semibold ${aFavor ? 'text-hoja' : 'text-carmesi'}`}>
-            {(aFavor ? '+' : '-') + formatMoney(Math.abs(local.diferencia), simboloSalida)}
+        {hayReferencial && (
+          <>
+            <div className="mt-3 flex items-baseline justify-between border-t border-slate-200 pt-3">
+              <p className="text-xs text-slate-500">Diferencia unitaria</p>
+              <p className={`text-lg font-semibold ${aFavor ? 'text-hoja' : 'text-carmesi'}`}>
+                {(aFavor ? '+' : '-') + formatMoney(Math.abs(local.diferencia), simboloSalida)}
+              </p>
+            </div>
+            <p className="mt-2 text-xs text-slate-500">{comparacion}</p>
+          </>
+        )}
+        {!hayReferencial && (
+          <p className="mt-3 text-xs text-slate-500">
+            Ingresa un precio referencial para compararlo con el precio final.
           </p>
-        </div>
-        <p className="mt-2 text-xs text-slate-500">{comparacion}</p>
+        )}
       </div>
 
       <Button className="w-full" onClick={onGuardarComo}>Guardar como</Button>

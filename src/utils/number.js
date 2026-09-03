@@ -41,8 +41,11 @@ export function roundTo(valor, decimales = 2) {
  * Convierte texto tecleado en número. Acepta coma o punto como separador
  * decimal ("14,94" y "14.94" valen lo mismo) y, cuando ambos aparecen,
  * el separador que ocupe la última posición es el decimal y el otro se
- * trata como separador de miles ("1.234,56" -> 1234.56). Un separador que
- * se repite varias veces agrupa miles ("1,234" con varias comas).
+ * trata como separador de miles ("1.234,56" -> 1234.56). Si un mismo
+ * separador se repite, agrupa miles solo cuando todos los grupos de la
+ * derecha miden 3 dígitos ("1,234,567" -> 1234567); si no, el último es
+ * decimal ("1,234,56" -> 1234.56). Un separador único es siempre decimal
+ * ("1,234" -> 1.234, como en la app original).
  * Devuelve NaN si el texto no representa un número válido.
  */
 export function parseNumberInput(texto) {
@@ -67,18 +70,28 @@ export function parseNumberInput(texto) {
     const decimal = ultimaComa > ultimoPunto ? ',' : '.'
     const miles = decimal === ',' ? '.' : ','
     s = s.split(miles).join('').replace(',', '.')
-  } else if (ultimoPunto >= 0) {
-    // Solo puntos: si hay más de uno, agrupan miles; si no, es decimal.
-    s = (ultimoPunto !== s.indexOf('.'))
-      ? s.split('.').join('')
-      : s
-  } else if (ultimaComa >= 0) {
-    // Solo comas: igual, pero la coma decimal se convierte a punto
-    // para que Number() la entienda.
-    s = (ultimaComa !== s.indexOf(','))
-      ? s.split(',').join('')
-      : s.replace(',', '.')
+  } else if (ultimoPunto >= 0 || ultimaComa >= 0) {
+    // Un solo tipo de separador. Repetido: si todos los grupos de la
+    // derecha miden 3 dígitos agrupa miles ("1,234,567"); si no, el
+    // último es el decimal y los demás agrupan miles ("1,234,56" ->
+    // 1234.56, típico error al teclear el punto de las centenas).
+    // Único: siempre decimal.
+    const separador = ultimoPunto >= 0 ? '.' : ','
+    const grupos = s.split(separador)
+    const decimalRepetido = grupos.length > 2
+      && grupos.slice(1).some((g) => g.length !== 3)
+    if (decimalRepetido) {
+      s = grupos
+        .slice(0, -1)
+        .join('')
+        .concat('.', grupos[grupos.length - 1])
+    } else if (grupos.length > 2) {
+      s = grupos.join('')
+    }
+    // length <= 2: dejar tal cual; la coma se convierte a punto abajo.
   }
+
+  if (s.includes(',')) s = s.split(',').join('.')
 
   const valor = Number(s)
   return Number.isFinite(valor) ? signo * valor : NaN

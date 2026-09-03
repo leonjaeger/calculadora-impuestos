@@ -24,6 +24,10 @@ export default function SaveCalcDialog({ abierto, nombreSugerido, onGuardar, onC
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
       onClick={onCancelar}
+      onKeyDown={(e) => {
+        // Escape desde cualquier foco dentro del diálogo (input o botones).
+        if (e.key === 'Escape') onCancelar()
+      }}
     >
       <div
         role="dialog"
@@ -43,7 +47,6 @@ export default function SaveCalcDialog({ abierto, nombreSugerido, onGuardar, onC
           onChange={(e) => setNombre(e.target.value)}
           onKeyDown={(e) => {
             if (e.key === 'Enter') confirmar()
-            if (e.key === 'Escape') onCancelar()
           }}
         />
         <div className="mt-6 flex justify-end gap-3">

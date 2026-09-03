@@ -34,8 +34,13 @@ export default function RatesPanel({ cotizacion, estado, onActualizar }) {
   const mensaje =
     estado === 'actualizando'
       ? 'Actualizando tasas (BCB)…'
-      : estado === 'ok'
-        ? `Fuente: BCB\nCotización del ${fechaCorta(cotizacion.fecha)}`
+      : estado === 'ok' || estado === 'desactualizado'
+        ? (estado === 'desactualizado'
+          ? 'No se pudo actualizar; se muestra la última cotización guardada.\n'
+          : 'Fuente: BCB\n')
+          + (cotizacion.fecha
+            ? `Cotización del ${fechaCorta(cotizacion.fecha)}`
+            : 'Tasas provisionales (sin conexión)')
           + (publicada ? `\nPublicada: ${publicada}` : '')
         : estado === 'error'
           ? 'No se pudo actualizar el tipo de cambio (usando tasas provisionales).'

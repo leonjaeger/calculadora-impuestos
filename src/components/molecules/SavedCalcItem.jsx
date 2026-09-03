@@ -19,9 +19,19 @@ export default function SavedCalcItem({ item, onCargar, onEliminar }) {
 
   return (
     <div
-      className="group flex cursor-pointer items-start gap-1.5 rounded-lg p-2 transition-colors hover:bg-slate-50"
+      role="button"
+      tabIndex={0}
+      aria-label={`Recargar ${item.nombre ?? 'cálculo'} en el formulario`}
+      className="group flex cursor-pointer items-start gap-1.5 rounded-lg p-2 transition-colors hover:bg-slate-50
+        focus-visible:outline focus-visible:outline-2 focus-visible:outline-slate-400"
       title="Clic para recargarlo en el formulario"
       onClick={() => onCargar(item)}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          onCargar(item)
+        }
+      }}
     >
       <div className="min-w-0 flex-1">
         <p className="break-words text-xs font-medium text-slate-900">{item.nombre}</p>

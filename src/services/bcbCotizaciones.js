@@ -52,7 +52,12 @@ function escribirCache(cotizacion) {
 }
 
 /**
- * Devuelve la cotización del día junto con si proviene de la caché.
+ * Devuelve la cotización del día junto con cómo se obtuvo:
+ *   - deCache: proviene de la caché local (true) o del endpoint (false).
+ *   - refrescoOk: el último intento de consulta al endpoint funcionó o
+ *     no fue necesario; false cuando la consulta falló y se respondió
+ *     con la caché de respaldo — útil para avisar al usuario de que lo
+ *     que se muestra puede estar desactualizado.
  * Usa la caché si es de hoy; si no, consulta el endpoint (JSON ya
  * procesado). Si la consulta falla pero existe caché (aunque sea de
  * otro día), la usa como respaldo. Devuelve null si no hay nada.
@@ -63,12 +68,12 @@ export async function obtenerCotizacion(forzar = false) {
   const cache = leerCache()
 
   if (!forzar && cache && cache.fecha === hoy) {
-    return { cotizacion: cache, deCache: true }
+    return { cotizacion: cache, deCache: true, refrescoOk: true }
   }
 
   try {
     const resp = await fetch(URL_API)
-    if (!resp.ok) throw new Error(`/api/bcb respondió ${resp.status}`)
+    if (!resp.ok) throw new Error(`${URL_API} respondió ${resp.status}`)
 
     const datos = await resp.json()
     const cotizacion = {
@@ -81,9 +86,10 @@ export async function obtenerCotizacion(forzar = false) {
     if (!valida) throw new Error('respuesta del endpoint incompleta')
 
     escribirCache(cotizacion)
-    return { cotizacion, deCache: false }
+    return { cotizacion, deCache: false, refrescoOk: true }
   } catch {
-    // Respaldo: usar caché aunque esté desactualizada (o nada).
-    return cache ? { cotizacion: cache, deCache: true } : null
+    // Respaldo: usar caché aunque esté desactualizada (o nada), pero
+    // dejando constancia de que el refresco falló.
+    return cache ? { cotizacion: cache, deCache: true, refrescoOk: false } : null
   }
 }
