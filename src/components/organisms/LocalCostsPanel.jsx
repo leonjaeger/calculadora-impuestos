@@ -42,34 +42,40 @@ export default function LocalCostsPanel({ campos, setCampo, local, onGuardarComo
               onChange={(v) => setCampo('monedaCostos', v)}
             />
           </Field>
-          <Field label="Coste de envío" htmlFor="envio">
+          <Field label="Envío" htmlFor="envio">
             <NumberInput id="envio" value={campos.envio} onChange={(v) => setCampo('envio', v)} />
           </Field>
-          <Field label="Coste de manipuleo" htmlFor="manipuleo">
+          <Field label="Manipuleo" htmlFor="manipuleo">
             <NumberInput id="manipuleo" value={campos.manipuleo} onChange={(v) => setCampo('manipuleo', v)} />
           </Field>
         </div>
-        <p className="mt-1.5 text-xs text-slate-500">La moneda se aplica a envío y manipuleo.</p>
+        <p className="mt-1.5 text-xs text-slate-500">
+          La moneda se aplica al envío y el manipuleo; son totales del lote.
+        </p>
       </div>
 
-      <Field label={`Precio referencial local (${simboloReferencial}, por unidad)`} htmlFor="referencial">
-        <div className="flex gap-2">
+      {/* Referencial y sus unidades con el mismo patrón Field del resto
+          de la página. La etiqueta corta evita el salto de línea que
+          desalineaba la fila en columnas angostas. */}
+      <div className="grid grid-cols-[minmax(0,1fr)_6.5rem] items-end gap-2">
+        <Field label={`Precio referencial (${simboloReferencial})`} htmlFor="referencial">
           <NumberInput
             id="referencial"
-            className="min-w-0 flex-1"
             value={campos.referencial}
             onChange={(v) => setCampo('referencial', v)}
           />
-          <div className="w-24 shrink-0">
-            <p className="mb-1 text-xs text-slate-500">Unidades</p>
-            <NumberInput
-              aria-label="Unidades del referencial"
-              value={campos.referencialUnidades}
-              onChange={(v) => setCampo('referencialUnidades', v)}
-            />
-          </div>
-        </div>
-      </Field>
+        </Field>
+        <Field label="Unidades" htmlFor="unidades-referencial">
+          <NumberInput
+            id="unidades-referencial"
+            value={campos.referencialUnidades}
+            onChange={(v) => setCampo('referencialUnidades', v)}
+          />
+        </Field>
+      </div>
+      <p className="-mt-2 text-xs text-slate-500">
+        El referencial es por unidad; se compara con el precio final unitario.
+      </p>
 
       {/* Desglose del lote */}
       <Divider className="my-1" />
@@ -86,13 +92,13 @@ export default function LocalCostsPanel({ campos, setCampo, local, onGuardarComo
         <div className="grid grid-cols-2 gap-3">
           <div>
             <p className="text-sm text-slate-500">Precio final</p>
-            <Amount valor={local.precioUnitario} simbolo={simboloSalida} size="xl" />
+            <Amount valor={local.precioUnitario} simbolo={simboloSalida} size="lg" />
             <p className="mt-1 text-xs text-slate-500">Total</p>
             <Amount valor={local.precioTotal} simbolo={simboloSalida} size="sm" />
           </div>
           <div>
             <p className="text-sm text-slate-500">Precio referencial</p>
-            <Amount valor={local.referencialUnitario} simbolo={simboloSalida} size="xl" />
+            <Amount valor={local.referencialUnitario} simbolo={simboloSalida} size="lg" />
             <p className="mt-1 text-xs text-slate-500">Total</p>
             <Amount valor={local.referencialTotal} simbolo={simboloSalida} size="sm" />
           </div>
@@ -101,7 +107,7 @@ export default function LocalCostsPanel({ campos, setCampo, local, onGuardarComo
           <>
             <div className="mt-3 flex items-baseline justify-between border-t border-slate-200 pt-3">
               <p className="text-xs text-slate-500">Diferencia unitaria</p>
-              <p className={`text-lg font-semibold ${aFavor ? 'text-hoja' : 'text-carmesi'}`}>
+              <p className={`text-lg font-semibold tabular-nums ${aFavor ? 'text-hoja' : 'text-carmesi'}`}>
                 {(aFavor ? '+' : '-') + formatMoney(Math.abs(local.diferencia), simboloSalida)}
               </p>
             </div>

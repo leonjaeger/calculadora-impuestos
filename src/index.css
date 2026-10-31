@@ -3,9 +3,11 @@
 @theme {
   /* Colores de la diferencia unitaria (iguales que en la app WinUI 3):
      verde hoja cuando el referencial supera al precio final (a favor)
-     y rojo carmesí cuando es en contra. */
-  --color-hoja: #4caf50;
-  --color-carmesi: #dc143c;
+     y rojo carmesí cuando es en contra. Oscurecidos respecto a los
+     originales (#4caf50 2.9:1, #dc143c 4.4:1) para pasar el mínimo
+     WCAG AA de 4.5:1 sobre blanco. */
+  --color-hoja: #2e7d32;
+  --color-carmesi: #b91c1c;
 }
 
 @layer base {
@@ -25,5 +27,15 @@
     @apply w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm
       text-slate-900 placeholder-slate-400 outline-none transition-colors
       focus:border-slate-500 focus:ring-2 focus:ring-slate-300;
+  }
+
+  /* Selector de moneda: se aplica junto con card-input (el átomo Select
+     ya la pone) y solo añade la flecha SVG propia (la nativa de Windows
+     desentona con el resto de los controles). */
+  .card-select {
+    @apply cursor-pointer appearance-none pr-9;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='none' stroke='%2364748b' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 6l4 4 4-4'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.65rem center;
   }
 }

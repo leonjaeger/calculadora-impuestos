@@ -4,7 +4,7 @@
 export default function Select({ className = '', ...props }) {
   return (
     <select
-      className={`card-input cursor-pointer ${className}`}
+      className={`card-input ${className}`}
       {...props}
     />
   )

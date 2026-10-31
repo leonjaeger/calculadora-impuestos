@@ -9,7 +9,7 @@ export default function PercentSlider({ id, value, onChange }) {
         <label htmlFor={id} className="text-sm font-semibold text-slate-900">
           Porcentaje de ganancia buscado
         </label>
-        <span className="text-sm font-semibold">{Math.round(value)} %</span>
+        <span className="text-sm font-semibold tabular-nums">{Math.round(value)} %</span>
       </div>
       <input
         id={id}

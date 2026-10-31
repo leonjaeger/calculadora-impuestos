@@ -16,7 +16,7 @@ export const CAMPOS_INICIALES = {
   monedaCostos: 'BOB',
   precioBase: '',
   unidades: '1',
-  tasaIva: '14.94',
+  tasaIva: '14,94', // coma decimal, como el resto de la UI (es-BO)
   ga: '0',
   gananciaPct: 0,
   referencial: '',

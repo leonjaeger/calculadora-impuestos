@@ -63,7 +63,7 @@ del mismo origen (sin CORS ni proxy en ejecución).
 npm i -g firebase-tools
 firebase login
 firebase use <ID-del-proyecto>     # crea .firebaserc
-firebase deploy --only hosting     # pública dist/
+firebase deploy --only hosting     # publica dist/
 ```
 
 O bien por CI: el workflow `.github/workflows/deploy.yml` construye y
@@ -71,24 +71,6 @@ publica con cada push (necesita el secreto `FIREBASE_TOKEN`, generado
 con `firebase login:ci`, y `.firebaserc` con el ID del proyecto — que
 no se versiona aquí). El bot de la cotización no necesita ningún
 secreto: solo permiso de commit en el repo.
-
-El parser vive en `functions/api/_lib/bcbParse.js` (módulo puro, sin
-APIs de navegador) y lo usan los dos entornos:
-
-- **Desarrollo**: middleware de Vite (`vite.config.js`), que descarga
-  la tabla en Node — sin `Origin`/`Referer`, que el BCB rechazan con
-  403 — y sirve el mismo JSON.
-- **Producción** (Cloudflare Pages): `functions/api/bcb.js` — Pages
-  Function servida junto con el sitio. La cotización cambia una vez al
-  día, así que el BCB se consulta **una vez al día en total**, no por
-  visitante: la caché se guarda bajo la fecha del día (Bolivia, UTC−4),
-  sirve el último JSON válido si el BCB falla y responde 502 si no hay
-  respaldo.
-
-Adicionalmente, cada navegador cachea la cotización del día en
-`localStorage` y consulta el endpoint como máximo una vez por día; si
-todo falla, se usan tasas provisionales de respaldo
-(`COTIZACION_PROVISIONAL`).
 
 ## Estructura (diseño atómico)
 

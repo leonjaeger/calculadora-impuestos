@@ -9,7 +9,10 @@ function fechaCorta(iso) {
   return m ? `${m[3]}/${m[2]}/${m[1]}` : ''
 }
 
-/** Timestamp UTC del BCB → 'dd/MM/yyyy hh:mm' de la zona del visitante. */
+/**
+ * Timestamp UTC de la consulta al BCB (campo `actualizado` del JSON) →
+ * 'dd/MM/yyyy hh:mm' de la zona del visitante.
+ */
 function fechaHoraLocal(iso) {
   const d = new Date(iso ?? '')
   if (Number.isNaN(d.getTime())) return ''
@@ -52,7 +55,7 @@ export default function RatesPanel({ cotizacion, estado, onActualizar }) {
       <div className="grid gap-3.5">
         <RateRow etiqueta="1 USD =" valor={formatMoney(cotizacion.bsPorUsd)} />
         <RateRow etiqueta="1 EUR =" valor={formatMoney(cotizacion.bsPorEur)} />
-        <RateRow etiqueta="1 BOB =" valor="Bs 1.00" />
+        <RateRow etiqueta="1 BOB =" valor={formatMoney(1)} />
         <Divider />
         <p className="whitespace-pre-line text-xs text-slate-500">{mensaje}</p>
         <Button className="w-full" disabled={cargando} onClick={onActualizar}>

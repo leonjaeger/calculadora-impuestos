@@ -6,7 +6,7 @@ import { MONEDAS } from '../../utils/monedas.js'
  */
 export default function CurrencySelect({ id, value, onChange }) {
   return (
-    <Select id={id} value={value} onChange={(e) => onChange(e.target.value)}>
+    <Select className="card-select" id={id} value={value} onChange={(e) => onChange(e.target.value)}>
       {MONEDAS.map((m) => (
         <option key={m.codigo} value={m.codigo}>
           {m.nombre}

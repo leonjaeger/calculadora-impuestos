@@ -112,36 +112,36 @@ export default function CalculatorPage() {
   return (
     <>
       <MainTemplate
-      header={<AppHeader />}
-      lateral={(
-        <>
-          <RatesPanel cotizacion={cotizacion} estado={estado} onActualizar={actualizar} />
-          <SavedPanel guardados={guardados} onCargar={cargarGuardado} onEliminar={eliminar} />
-        </>
-      )}
-      calculadora={(
-        <div className="card max-w-4xl p-6 sm:p-8">
-          <div className="grid items-start gap-10 xl:grid-cols-2">
-            <TaxesPanel
-              campos={campos}
-              setCampo={setCampo}
-              factor={factor}
-              impuestos={resultadoImpuestos}
-              onReiniciar={reiniciar}
-            />
-            <LocalCostsPanel
-              campos={campos}
-              setCampo={setCampo}
-              local={local}
-              onGuardarComo={() => {
-                setNombreSugerido(sugerirNombre())
-                setDialogoAbierto(true)
-              }}
-            />
+        header={<AppHeader />}
+        lateral={(
+          <>
+            <RatesPanel cotizacion={cotizacion} estado={estado} onActualizar={actualizar} />
+            <SavedPanel guardados={guardados} onCargar={cargarGuardado} onEliminar={eliminar} />
+          </>
+        )}
+        calculadora={(
+          <div className="card max-w-4xl p-6 sm:p-8">
+            <div className="grid items-start gap-10 xl:grid-cols-2">
+              <TaxesPanel
+                campos={campos}
+                setCampo={setCampo}
+                factor={factor}
+                impuestos={resultadoImpuestos}
+                onReiniciar={reiniciar}
+              />
+              <LocalCostsPanel
+                campos={campos}
+                setCampo={setCampo}
+                local={local}
+                onGuardarComo={() => {
+                  setNombreSugerido(sugerirNombre())
+                  setDialogoAbierto(true)
+                }}
+              />
+            </div>
           </div>
-        </div>
-      )}
-    />
+        )}
+      />
       <SaveCalcDialog
         abierto={dialogoAbierto}
         nombreSugerido={nombreSugerido}

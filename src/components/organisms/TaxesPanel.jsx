@@ -41,39 +41,43 @@ export default function TaxesPanel({ campos, setCampo, factor, impuestos, onRein
           </Field>
         </div>
         {monedaEntrada !== monedaSalida && (
-          <p className="mt-1.5 text-right text-xs text-slate-500">
+          <p className="mt-1.5 text-right text-xs tabular-nums text-slate-500">
             Tasa: 1 {monedaEntrada} ({simboloDe(monedaEntrada)}) ={' '}
             {formatTasa(factor)} {monedaSalida} ({simboloSalida})
           </p>
         )}
       </div>
 
-      <Field label="Precio base (por unidad)" htmlFor="precio-base">
-        <div className="flex gap-2">
+      {/* Precio y unidades en fila, cada uno con su etiqueta Field:
+          así las etiquetas comparten estilo y los inputs quedan a la
+          misma altura (antes "Unidades" era un mini-rótulo interno y
+          desalineaba la fila). */}
+      <div className="grid grid-cols-[minmax(0,1fr)_6.5rem] items-end gap-2">
+        <Field label="Precio base (por unidad)" htmlFor="precio-base">
           <NumberInput
             id="precio-base"
-            className="min-w-0 flex-1"
             value={campos.precioBase}
             onChange={(v) => setCampo('precioBase', v)}
           />
-          <div className="w-24 shrink-0">
-            <p className="mb-1 text-xs text-slate-500">Unidades</p>
-            <NumberInput
-              aria-label="Unidades del lote"
-              placeholder="0"
-              value={campos.unidades}
-              onChange={(v) => setCampo('unidades', v)}
-            />
-          </div>
-        </div>
-      </Field>
+        </Field>
+        <Field label="Unidades" htmlFor="unidades-lote">
+          <NumberInput
+            id="unidades-lote"
+            placeholder="0"
+            value={campos.unidades}
+            onChange={(v) => setCampo('unidades', v)}
+          />
+        </Field>
+      </div>
 
-      {/* Los dos tributos comparten fila: son ambos porcentajes */}
-      <div className="grid gap-3 sm:grid-cols-2">
+      {/* Los dos tributos comparten fila: son ambos porcentajes. items-end
+          alinea los inputs por abajo aunque una etiqueta se parta en dos
+          líneas en columnas angostas. */}
+      <div className="grid items-end gap-3 sm:grid-cols-2">
         <Field label="Tasa de IVA (%)" htmlFor="tasa-iva">
           <NumberInput id="tasa-iva" placeholder="0" value={campos.tasaIva} onChange={(v) => setCampo('tasaIva', v)} />
         </Field>
-        <Field label="Gravamen arancelario GA (%)" htmlFor="ga">
+        <Field label="Gravamen arancelario (%)" htmlFor="ga">
           <NumberInput id="ga" placeholder="0" value={campos.ga} onChange={(v) => setCampo('ga', v)} />
         </Field>
       </div>
@@ -90,7 +94,7 @@ export default function TaxesPanel({ campos, setCampo, factor, impuestos, onRein
             etiqueta="Total del lote (base + GA + IVA)"
             valor={impuestos.total}
             simbolo={simboloSalida}
-            size="lg"
+            size="xl"
           />
         </div>
         <Button className="w-full" onClick={onReiniciar}>Reiniciar</Button>

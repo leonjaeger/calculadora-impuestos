@@ -11,6 +11,7 @@ export default function Button({ variant = 'default', className = '', ...props }
     <button
       type="button"
       className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors
+        focus-visible:border-slate-500 focus-visible:ring-2 focus-visible:ring-slate-300
         disabled:pointer-events-none disabled:opacity-50 ${variantes[variant]} ${className}`}
       {...props}
     />

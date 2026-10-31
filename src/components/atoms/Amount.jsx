@@ -1,10 +1,14 @@
 import { formatMoney } from '../../utils/number.js'
 
+/* Escala tipográfica de montos: 16 (totales, peso medio) → 18 (resultados
+   secundarios) → 22 (comparativa) → 26 (resultado destacado). Los números
+   van en dígitos tabulares para que los montos no "bailen" ni se
+   desalineen al cambiar de valor. */
 const TAMANOS = {
-  sm: 'text-base font-semibold',
-  md: 'text-xl font-semibold',
-  lg: 'text-2xl font-semibold',
-  xl: 'text-[22px] font-semibold',
+  sm: 'text-base font-medium tabular-nums',
+  md: 'text-lg font-semibold tabular-nums',
+  lg: 'text-[22px] font-semibold tabular-nums',
+  xl: 'text-[26px] font-semibold tabular-nums',
 }
 
 /**

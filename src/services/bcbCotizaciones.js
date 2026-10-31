@@ -80,6 +80,9 @@ export async function obtenerCotizacion(forzar = false) {
       fecha: typeof datos.fecha === 'string' && datos.fecha ? datos.fecha : hoy,
       bsPorUsd: Number(datos.bsPorUsd),
       bsPorEur: Number(datos.bsPorEur),
+      // Momento de la consulta al BCB (UTC); el panel lo muestra como
+      // «Publicada». Se conserva también en la caché.
+      actualizado: typeof datos.actualizado === 'string' ? datos.actualizado : null,
     }
     const valida = Number.isFinite(cotizacion.bsPorUsd) && cotizacion.bsPorUsd > 0
       && Number.isFinite(cotizacion.bsPorEur) && cotizacion.bsPorEur > 0

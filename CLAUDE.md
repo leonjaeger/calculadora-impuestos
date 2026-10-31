@@ -51,8 +51,9 @@ npm run preview   # sirve dist/
   cruzar medianoche cada 60 s), `useSavedCalculations` (localStorage),
   `useCalculator` (estado del formulario; los números se guardan como
   **texto**, no como float).
-- `services/` — `bcbCotizaciones.js` (scraping del HTML del BCB,
-  caché en `localStorage`).
+- `services/` — `bcbCotizaciones.js` (consume el JSON ya procesado
+  — `/cotizacion.json` o `/api/bcb` — y lo cachea en `localStorage`;
+  el scraping vive en `scripts/bcbParse.js`).
 - `utils/` — `number.js` (parser/formateo anti comas flotantes),
   `calculos.js` (puerto directo de `Calculos.cs`), `monedas.js`.
 

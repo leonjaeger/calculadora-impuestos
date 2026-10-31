@@ -8,7 +8,7 @@ export default function DesgloseRow({ etiqueta, valor, simbolo = 'Bs' }) {
   return (
     <div className="flex items-baseline justify-between gap-3 text-sm">
       <span className="text-slate-500">{etiqueta}</span>
-      <span className="font-semibold text-slate-900">{formatMoney(valor, simbolo)}</span>
+      <span className="font-semibold tabular-nums text-slate-900">{formatMoney(valor, simbolo)}</span>
     </div>
   )
 }

@@ -15,7 +15,7 @@ export const URL_INDICADORES =
   'https://www.bcb.gob.bo/librerias/indicadores/otras/ultimo.php'
 
 // User-Agent propio: el BCB responde 403 a peticiones sin uno, y el
-// dominio del sitio identifica de dónde vienen sus consultas.
+// nombre de la app identifica de dónde vienen sus consultas.
 export const USER_AGENT = 'CalculadoraDeImpuestos/1.0 (+web)'
 
 const MESES = [
@@ -29,8 +29,8 @@ const ENTIDADES = {
   deg: '°', middot: '·', laquo: '«', raquo: '»', euro: '€',
   Aacute: 'Á', Eacute: 'É', Iacute: 'Í', Oacute: 'Ó', Uacute: 'Ú', Ntilde: 'Ñ',
   aacute: 'á', eacute: 'é', iacute: 'í', oacute: 'ó', uacute: 'ú', ntilde: 'ñ',
-  Uuml: 'Ü', uuml: 'ü', Adieresis: 'Ä', adieresis: 'ä', ccedil: 'ç',
-  agrav: 'à', egrave: 'è', igrave: 'ì', ograve: 'ò', ugrave: 'ù',
+  Uuml: 'Ü', uuml: 'ü', Auml: 'Ä', auml: 'ä', ccedil: 'ç',
+  agrave: 'à', egrave: 'è', igrave: 'ì', ograve: 'ò', ugrave: 'ù',
 }
 
 /** Decodifica entidades HTML nombradas y numéricas (&#233;, &#xE9;). */
