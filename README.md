@@ -70,10 +70,12 @@ firebase deploy --only hosting     # publica dist/
 ```
 
 O bien por CI: el workflow `.github/workflows/deploy.yml` construye y
-publica con cada push (necesita el secreto `FIREBASE_TOKEN`, generado
-con `firebase login:ci`, y `.firebaserc` con el ID del proyecto — que
-no se versiona aquí). El bot de la cotización no necesita ningún
-secreto: solo permiso de commit en el repo.
+publica con cada push humano (necesita el secreto `FIREBASE_TOKEN`,
+generado con `firebase login:ci`, y `.firebaserc` con el ID del
+proyecto). El bot de la cotización, cuando la tasa cambió, hace commit
+y **llama él mismo** a ese workflow (`workflow_call`, mismo secreto):
+GitHub no dispara el evento `push` para los commits hechos con
+`GITHUB_TOKEN`, así que su push por sí solo no despliega.
 
 ## Estructura (diseño atómico)
 
@@ -97,6 +99,6 @@ scripts/
 └── actualizar-cotizacion.mjs # job diario: BCB → public/cotizacion.json
 
 .github/workflows/
-├── cotizacion.yml    # 1 vez al día: consulta al BCB + commit del JSON
-└── deploy.yml        # cada push: build + deploy a Firebase Hosting
+├── cotizacion.yml    # diario: consulta al BCB + commit del JSON + despliegue
+└── deploy.yml        # push humano o llamada del bot: build + deploy
 ```

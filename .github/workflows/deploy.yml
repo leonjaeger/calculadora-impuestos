@@ -1,13 +1,24 @@
-# Despliegue a Firebase Hosting: se dispara con cada push (incluidos
-# los commits diarios del bot de la cotización). Requiere el secreto
-# FIREBASE_TOKEN (token CI generado con `firebase login:ci`) y un
-# proyecto configurado en .firebaserc.
+# Despliegue a Firebase Hosting. Se dispara:
+#   - con cada push a main hecho por una persona, y
+#   - desde el bot de la cotización (.github/workflows/cotizacion.yml),
+#     que lo llama con workflow_call cuando cambió la cotización: los
+#     push que hace el bot con GITHUB_TOKEN NO disparan el evento push
+#     (regla de GitHub contra bucles), así que sin esta llamada el sitio
+#     se quedaba con la cotización del último push humano.
+# Requiere el secreto FIREBASE_TOKEN (token CI generado con
+# `firebase login:ci`) y un proyecto configurado en .firebaserc.
 name: Despliegue
 
 on:
   push:
     branches: [main]
   workflow_dispatch: {}
+  workflow_call:
+    inputs:
+      ref:
+        description: Rama o commit a desplegar (el bot pasa main, que ya incluye su commit)
+        type: string
+        required: false
 
 permissions:
   contents: read
@@ -17,6 +28,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          # Llamado por el bot, github.sha es el commit ANTERIOR al suyo:
+          # hay que desplegar la ref que pasa (main).
+          ref: ${{ inputs.ref || github.sha }}
       - uses: actions/setup-node@v4
         with:
           node-version: 22

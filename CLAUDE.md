@@ -95,10 +95,13 @@ configuración/hosting especial):
   retrasaba hasta media mañana — corridas reales 09:13–12:04 Bolivia en
   oct/2026): ejecuta `scripts/actualizar-cotizacion.mjs`,
   que descarga la tabla y escribe `public/cotizacion.json`
-  (`{fecha, bsPorUsd, bsPorEur, actualizado}`) con commit solo si
-  cambió. El push dispara el despliegue
-  (`.github/workflows/deploy.yml` → build + `firebase deploy
-  --only hosting` con el secreto `FIREBASE_TOKEN`).
+  (`{fecha, bsPorUsd, bsPorEur, actualizado}`) solo si cambiaron
+  fecha o tasas (si no, ni commit ni despliegue). Tras su commit, el
+  bot **llama** al despliegue (`deploy.yml` vía `workflow_call` con
+  `ref: main` → build + `firebase deploy --only hosting` con el secreto
+  `FIREBASE_TOKEN`): los push con `GITHUB_TOKEN` NO disparan `push`, y
+  por eso entre el 4/9 y el 31/10/2026 producción se quedó con la
+  cotización del 3/9 aunque el repo tenía la diaria.
 - El navegador consume **el JSON estático del propio sitio**
   (`/cotizacion.json` en build — `import.meta.env.PROD`; `/api/bcb` en
   dev vía middleware de `vite.config.js` con el mismo parser). Estático
