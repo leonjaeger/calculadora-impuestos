@@ -47,8 +47,9 @@ npm run preview   # sirve dist/
   dos columnas se resuelve con breakpoints de Tailwind, sin code-behind).
 - `pages/` — CalculatorPage (orquesta hooks + organismos; único lugar
   con lógica de composición).
-- `hooks/` — `useBcbRates` (descarga + caché por día + refresco al
-  cruzar medianoche cada 60 s), `useSavedCalculations` (localStorage),
+- `hooks/` — `useBcbRates` (descarga + caché por día; con la pestaña
+  abierta refresca al cruzar medianoche y reintenta cada 30 min mientras
+  la cotización mostrada sea de un día anterior), `useSavedCalculations` (localStorage),
   `useCalculator` (estado del formulario; los números se guardan como
   **texto**, no como float).
 - `services/` — `bcbCotizaciones.js` (consume el JSON ya procesado
@@ -88,9 +89,11 @@ usuario, descartadas las
 variantes Cloudflare Function y Cloud Function de Firebase que exigen
 configuración/hosting especial):
 
-- **Una consulta al día en total**, hecha por GitHub Actions
-  (`.github/workflows/cotizacion.yml`, cron `10 9 * * *` = 05:10 de
-  Bolivia), no por visitas: ejecuta `scripts/actualizar-cotizacion.mjs`,
+- **Consultas solo desde GitHub Actions**, no por visitas
+  (`.github/workflows/cotizacion.yml`, cron `10 4`, `10 6` y `10 10` UTC
+  = 00:10, 02:10 y 06:10 de Bolivia; con un solo `10 9` GitHub lo
+  retrasaba hasta media mañana — corridas reales 09:13–12:04 Bolivia en
+  oct/2026): ejecuta `scripts/actualizar-cotizacion.mjs`,
   que descarga la tabla y escribe `public/cotizacion.json`
   (`{fecha, bsPorUsd, bsPorEur, actualizado}`) con commit solo si
   cambió. El push dispara el despliegue
@@ -99,7 +102,10 @@ configuración/hosting especial):
 - El navegador consume **el JSON estático del propio sitio**
   (`/cotizacion.json` en build — `import.meta.env.PROD`; `/api/bcb` en
   dev vía middleware de `vite.config.js` con el mismo parser). Estático
-  y del mismo origen: sin CORS y sin proxy en ejecución. `VITE_BCB_URL`
+  y del mismo origen: sin CORS y sin proxy en ejecución. Firebase lo
+  sirve con `Cache-Control: no-cache` (`firebase.json`) y el servicio
+  pide con `cache: 'no-cache'`: antes el `max-age=3600` por defecto
+  hacía que «Actualizar» devolviera el JSON viejo hasta una hora. `VITE_BCB_URL`
   permite apuntar a otro lugar si cambia el hosting.
 - Parser compartido puro: `scripts/bcbParse.js` (sin DOMParser ni APIs
   de Workers — corre igual en Node y en el navegador).

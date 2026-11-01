@@ -1,18 +1,29 @@
-# La ÚNICA consulta diaria al BCB del proyecto. Descarga la tabla,
-# la parsea con scripts/bcbParse.js y escribe public/cotizacion.json.
-# Si el archivo cambió, hace commit y push — lo que dispara el
-# despliegue (.github/workflows/deploy.yml). Si el BCB no publicó nada
-# nuevo, no hay commit y el sitio conserva el archivo anterior (su
-# campo `fecha` lo hace visible).
+# Las ÚNICAS consultas al BCB del proyecto (no hay consultas por
+# visita). Descarga la tabla, la parsea con scripts/bcbParse.js y
+# escribe public/cotizacion.json. Si el archivo cambió, hace commit y
+# push — lo que dispara el despliegue (.github/workflows/deploy.yml).
+# Si el BCB no publicó nada nuevo, no hay commit y el sitio conserva el
+# archivo anterior (su campo `fecha` lo hace visible).
 name: Cotización BCB
 
 on:
   schedule:
-    # 05:10 de Bolivia (UTC−4). La tabla del BCB ya marca el día siguiente
-    # alrededor de las 20:00 de Bolivia (00:00 UTC), así que a esta hora el
-    # giro del día ya ocurrió de sobra.
-    - cron: '10 9 * * *'
+    # GitHub retrasa los cron programados varias horas (con '10 9' las
+    # corridas reales caían entre las 09:13 y las 12:04 de Bolivia), así
+    # que se apunta a la medianoche de Bolivia (UTC−4) y se dejan dos
+    # respaldos. La tabla del BCB ya marca el día nuevo desde ~20:00 de
+    # Bolivia la víspera; las corridas que no traen cambios no hacen
+    # commit ni redespliegan.
+    - cron: '10 4 * * *'  # 00:10 de Bolivia
+    - cron: '10 6 * * *'  # 02:10 de Bolivia (respaldo)
+    - cron: '10 10 * * *' # 06:10 de Bolivia (respaldo)
   workflow_dispatch: {} # botón «Run workflow» para forzar una actualización manual
+
+# Si dos corridas se solapan por los retrasos, la segunda espera: así
+# nunca compiten por el push.
+concurrency:
+  group: cotizacion-bcb
+  cancel-in-progress: false
 
 permissions:
   contents: write # el bot hace commit del archivo actualizado

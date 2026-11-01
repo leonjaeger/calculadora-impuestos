@@ -41,12 +41,15 @@ Ver `src/utils/number.js` para los detalles.
 La cotización **no se consulta desde el navegador**: la tabla del BCB
 no envía CORS y responde 403 a peticiones con `Origin`/`Referer`. La
 consulta la hace **GitHub Actions una vez al día**
-(`.github/workflows/cotizacion.yml`, cron a las 05:10 de Bolivia), con
+(`.github/workflows/cotizacion.yml`, cron a las 00:10 de Bolivia con dos
+respaldos — GitHub retrasa los cron varias horas), con
 el parser compartido (`scripts/bcbParse.js`), y **escribe
 `public/cotizacion.json`** — un archivo estático del propio sitio, con
 `{fecha, bsPorUsd, bsPorEur, actualizado}`, que el navegador consume
 del mismo origen (sin CORS ni proxy en ejecución).
 
+- Firebase sirve `cotizacion.json` con `Cache-Control: no-cache` (el
+  navegador revalida siempre; el botón Actualizar trae lo último).
 - El navegador usa su propio JSON del archivo y además cachea la
   cotización del día en `localStorage`: la mayoría de las navegaciones
   no generan ninguna petición nueva.

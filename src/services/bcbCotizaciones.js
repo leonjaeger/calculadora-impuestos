@@ -72,7 +72,10 @@ export async function obtenerCotizacion(forzar = false) {
   }
 
   try {
-    const resp = await fetch(URL_API)
+    // no-cache: revalidar siempre con el servidor (ETag → 304 barato).
+    // Sin esto el navegador reutilizaba el JSON de su caché HTTP hasta
+    // una hora y el botón Actualizar no traía la cotización nueva.
+    const resp = await fetch(URL_API, { cache: 'no-cache' })
     if (!resp.ok) throw new Error(`${URL_API} respondió ${resp.status}`)
 
     const datos = await resp.json()
