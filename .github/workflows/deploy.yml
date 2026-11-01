@@ -27,12 +27,12 @@ jobs:
   desplegar:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           # Llamado por el bot, github.sha es el commit ANTERIOR al suyo:
           # hay que desplegar la ref que pasa (main).
           ref: ${{ inputs.ref || github.sha }}
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: 22
           cache: npm
